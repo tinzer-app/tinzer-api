@@ -17,4 +17,10 @@ export class InspectionsService {
 
     return data;
   }
+
+  async runInspection() {
+    const data = await getDelayedValue(null, 1000);
+
+    return data;
+  }
 }

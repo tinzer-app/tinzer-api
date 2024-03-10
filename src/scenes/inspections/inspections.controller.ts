@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 
 import { InspectionsService } from './inspections.service';
 
@@ -14,5 +14,12 @@ export class InspectionsController {
   @Get('/:id')
   getReportData() {
     return this.inspectionsService.getReportData();
+  }
+
+  @Post('/:id/runInspection')
+  runInspection(@Res() response) {
+    return response
+      .status(HttpStatus.I_AM_A_TEAPOT)
+      .json(this.inspectionsService.runInspection());
   }
 }
