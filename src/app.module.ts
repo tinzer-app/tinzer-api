@@ -7,6 +7,8 @@ import {
   ConditionsService,
   InspectionsController,
   InspectionsService,
+  ModalSearchController,
+  ModalSearchService,
   ProjectsController,
   ProjectsService,
 } from './scenes';
@@ -22,7 +24,13 @@ import {
     ProjectsController,
     ConditionsController,
     InspectionsController,
+    ModalSearchController,
   ],
-  providers: [ProjectsService, ConditionsService, InspectionsService],
+  providers: [
+    ProjectsService,
+    ConditionsService,
+    InspectionsService,
+    ModalSearchService,
+  ],
 })
 export class AppModule {}
