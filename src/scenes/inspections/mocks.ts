@@ -6,12 +6,12 @@ const MOCK_DATE_FNS_SINGLE_CONDITIONS = [
   {
     type: ConditionType.fileExistence,
     id: '1',
-    params: './README.md',
+    params: './package.json',
   },
   {
     type: ConditionType.fileExistence,
-    id: '1.2',
-    params: './tsconfig.json',
+    id: '1.1',
+    params: './src/App.tsx',
   },
   {
     type: ConditionType.stringsInFilesMatching,
@@ -21,24 +21,38 @@ const MOCK_DATE_FNS_SINGLE_CONDITIONS = [
       pattern: '"license": "MIT"',
     },
   },
+  {
+    type: ConditionType.stringsInFilesMatching,
+    id: '2.2',
+    params: {
+      path: './package.json',
+      pattern: '"description": "Modern JavaScript date utility library"',
+    },
+  },
+  {
+    type: ConditionType.stringsInFilesMatching,
+    id: '2.3',
+    params: {
+      path: './README.md',
+      pattern: 'read me :)',
+    },
+  },
 ];
 
 export const MOCK_INSPECTIONS_PAGE_DATA = {
   type: 'inspections',
   paginationData: {
-    pagesCount: 1,
+    pagesCount: 3,
     currentPage: 1,
   },
-  data: [
-    {
-      id: 'testInsp',
-      title: `основные конфиги в date-fns `,
-      description: '-',
-      lastInspectionTimestamp: '2024-04-01T16:07:30-05:00',
-      lastInspectionStatus: getReportResult(0),
-      conditionsCount: 3,
-    },
-  ],
+  data: Array.from({ length: 10 }).map((_, idx) => ({
+    id: idx.toString(),
+    title: `проверка ${idx}`,
+    description: 'Краткое описание...',
+    lastInspectionTimestamp: '2022-08-10T10:30:04-05:00',
+    lastInspectionStatus: getReportResult(idx),
+    conditionsCount: idx,
+  })),
 };
 
 export const MOCK_INSPECTION_PAGE_DATA = {
@@ -46,34 +60,63 @@ export const MOCK_INSPECTION_PAGE_DATA = {
   data: {
     projects: [
       {
+        title: 'проект 1',
+        id: 'проект 1',
+      },
+      {
         title: 'date-fns',
         id: 'date-fns',
+      },
+      {
+        title: 'ui-library',
+        id: 'ui-library',
       },
     ],
     conditions: [
       {
-        title: 'Лицензия MIT и наличие README и tsconfig',
-        id: 'react-version',
+        title: 'шаблон 1',
+        id: 'шаблон 1',
+      },
+      {
+        title: 'наличие dockerfile',
+        id: 'наличие dockerfile',
       },
     ],
     id: 'check-date-fns',
-    title: `основные конфиги в date-fns `,
-    description: '-',
-    creationTimestamp: '2024-04-01T16:07:21-05:00',
-    lastEditionTimestamp: '2024-04-01T16:07:21-05:00',
-    lastInspectionTimestamp: '2024-04-01T16:07:30-05:00',
+    title: 'Проверка package.json в date-fns',
+    description:
+      'Проверка наличия строк "license": "MIT" и "description": "Modern JavaScript date utility library" в package.json',
+    creationTimestamp: '2023-12-24 11:05:58',
+    lastEditionTimestamp: '2023-12-24 11:05:58',
+    lastInspectionTimestamp: '2023-12-29 04:00:00',
     inspectionData: {
-      status: InspectionStatus.success,
+      status: InspectionStatus.fail,
       details: {
         conditions: MOCK_DATE_FNS_SINGLE_CONDITIONS,
         projectsInspections: [
           {
             project: {
+              title: 'example',
+              id: '1',
+            },
+            status: InspectionStatus.fail,
+            conditionsStatuses: [
+              InspectionStatus.success,
+              InspectionStatus.fail,
+              InspectionStatus.success,
+              InspectionStatus.fail,
+              InspectionStatus.fail,
+            ],
+          },
+          {
+            project: {
               title: 'date-fns',
-              id: '-1',
+              id: 'date-fns',
             },
             status: InspectionStatus.success,
             conditionsStatuses: [
+              InspectionStatus.success,
+              InspectionStatus.success,
               InspectionStatus.success,
               InspectionStatus.success,
               InspectionStatus.success,
@@ -84,3 +127,4 @@ export const MOCK_INSPECTION_PAGE_DATA = {
     },
   },
 };
+
