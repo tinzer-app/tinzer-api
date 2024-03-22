@@ -1,12 +1,13 @@
-import { Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 
 import { InspectionsService } from './inspections.service';
+import { MOCK_REQUEST_REPORT } from '../../dto/request-report.mock';
 
 @Controller('/inspections')
 export class InspectionsController {
   constructor(private readonly inspectionsService: InspectionsService) {}
 
-  @Post()
+  @Get()
   getInspectionsListData() {
     return this.inspectionsService.getInspectionsListData();
   }
@@ -16,10 +17,11 @@ export class InspectionsController {
     return this.inspectionsService.getReportData();
   }
 
+  // todo body inspection
   @Post('/:id/runInspection')
-  runInspection(@Res() response) {
+  async runInspection(@Param('id') id: number, @Res() response) {
     return response
-      .status(HttpStatus.I_AM_A_TEAPOT)
-      .json(this.inspectionsService.runInspection());
+      .status(HttpStatus.CREATED)
+      .json(this.inspectionsService.runInspection(MOCK_REQUEST_REPORT));
   }
 }
