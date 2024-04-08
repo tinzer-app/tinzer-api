@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 import {
   ConditionsController,
@@ -14,12 +12,6 @@ import {
 } from './scenes';
 
 @Module({
-  imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
-      exclude: ['/api/(.*)'],
-    }),
-  ],
   controllers: [
     ProjectsController,
     ConditionsController,

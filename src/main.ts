@@ -4,11 +4,11 @@ import { AppModule } from './app.module';
 import { API_PREFIX } from './constants';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   app.setGlobalPrefix(API_PREFIX);
 
-  await app.listen(3000);
+  await app.listen(80);
 }
 
 bootstrap();

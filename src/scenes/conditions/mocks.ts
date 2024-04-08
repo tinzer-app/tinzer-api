@@ -4,7 +4,7 @@ export const MOCK_DATE_FNS_CONDITIONS = [
   {
     type: ConditionType.fileExistence,
     id: '1',
-    params: ['./package.json', './src/App.tsx'],
+    params: ['./README.md', 'tsconfig.json'],
   },
   {
     type: ConditionType.stringsInFilesMatching,
@@ -12,14 +12,7 @@ export const MOCK_DATE_FNS_CONDITIONS = [
     params: [
       {
         path: './package.json',
-        patterns: [
-          '"license": "MIT"',
-          '"description": "Modern JavaScript date utility library"',
-        ],
-      },
-      {
-        path: './README.md',
-        patterns: ['read me :)'],
+        patterns: ['"license": "MIT"'],
       },
     ],
   },
@@ -27,15 +20,17 @@ export const MOCK_DATE_FNS_CONDITIONS = [
 
 export const MOCK_CONDITIONS_PAGE_DATA = {
   type: 'conditions',
-  data: Array.from({ length: 10 }).map((_, idx) => ({
-    title: `правило ${idx}`,
-    description: 'Краткое описание...',
-    id: idx.toString(),
-    creationTimestamp: '2022-08-10T10:30:04-05:00',
-    lastEditionTimestamp: '2023-12-24T04:56:37-05:00',
-  })),
+  data: [
+    {
+      title: `Лицензия MIT и наличие README и tsconfig`,
+      description: 'лицензия и конфиги',
+      id: '0',
+      creationTimestamp: '2024-03-30T11:54:39-05:00',
+      lastEditionTimestamp: '2024-03-30T11:54:39-05:00',
+    },
+  ],
   paginationData: {
-    pagesCount: 2,
+    pagesCount: 1,
     currentPage: 1,
   },
 };
@@ -43,12 +38,12 @@ export const MOCK_CONDITIONS_PAGE_DATA = {
 export const MOCK_CONDITION_PAGE_DATA = {
   type: 'condition',
   data: {
-    id: 'cond-date-fns',
-    title: 'Лицензия и описание',
+    title: `Лицензия MIT и наличие README и tsconfig`,
     description:
-      'Наличие строк "license": "MIT" и "description": "Modern JavaScript date utility library" в package.json',
-    creationTimestamp: '2023-01-07 21:32:11',
-    lastEditionTimestamp: '2023-12-24 11:05:58',
+      'Наличие в package.json лицензии MIT и наличие файлов README.md и tsconfig.json в корне репозитория',
+    id: '0',
+    creationTimestamp: '2024-03-30T11:54:39-05:00',
+    lastEditionTimestamp: '2024-03-30T11:54:39-05:00',
     conditions: MOCK_DATE_FNS_CONDITIONS,
   },
 };
