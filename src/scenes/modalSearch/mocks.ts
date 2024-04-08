@@ -4,38 +4,18 @@ export const MOCK_PROJECTS = {
       title: 'date-fns',
       id: 'date-fns',
     },
-    {
-      title: 'проект',
-      id: 'проект',
-    },
-    {
-      title: 'local-ui',
-      id: 'local-ui',
-    },
-    {
-      title: 'filter-hooks',
-      id: 'filter-hooks',
-    },
-    {
-      title: 'продукт 1',
-      id: 'продукт 1',
-    },
-    {
-      title: 'продукт 2',
-      id: 'продукт 2',
-    },
+    ...Array.from({ length: 20 }).map((_, idx) => ({
+      title: `проект ${idx}`,
+      id: `${idx}`,
+    })),
   ],
 };
 
 export const MOCK_CONDITIONS = {
   items: [
     {
-      title: 'актуальная версия React',
+      title: 'Лицензия MIT и наличие README и tsconfig',
       id: 'react-version',
-    },
-    {
-      title: 'наличие README',
-      id: 'readme-exist',
     },
   ],
 };
