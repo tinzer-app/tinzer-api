@@ -8,7 +8,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix(API_PREFIX);
 
-  await app.listen(3000);
+  await app.listen(5000);
 }
 
 bootstrap();
