@@ -1,18 +1,24 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { ConditionsService } from './conditions.service';
+import { ConditionDto } from './condition.dto';
 
 @Controller('/conditions')
 export class ConditionsController {
   constructor(private readonly conditionsService: ConditionsService) {}
 
-  @Post()
+  @Get()
   getConditionsListData() {
     return this.conditionsService.getConditionsListData();
   }
 
   @Get('/:id')
-  getReportData() {
-    return this.conditionsService.getReportData();
+  getCondition(@Param('id') id: string) {
+    return this.conditionsService.getCondition(id);
+  }
+
+  @Post('/create')
+  createCondition(@Body() conditionDto: ConditionDto) {
+    return this.conditionsService.createCondition(conditionDto);
   }
 }

@@ -1,7 +1,7 @@
 import { RequestReportDto } from './request-report.dto';
-import { ConditionEnumDto } from './condition.enum.dto';
-import { ProjectDto } from './project.dto';
-import { ConditionDto } from './condition.dto';
+import { ConditionEnumDto } from './conditions/condition.enum.dto';
+import { ProjectDto } from './projects/project.dto';
+import { ConditionDto } from './conditions/condition.dto';
 
 const MOCK_PROJECT_REQUEST: ProjectDto = {
   system: 'github',
