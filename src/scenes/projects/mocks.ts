@@ -3,35 +3,20 @@ import { getReportResult } from 'src/utils/getReportResult';
 
 export const MOCK_PROJECTS_PAGE_DATA = {
   type: 'projects',
-  data: [
-    {
-      id: '-1',
-      repository: {
-        branch: 'master',
-        link: 'https://github.com/date-fns/date-fns',
-      },
-      title: `date-fns`,
-      description:
-        'date-fns provides the most comprehensive, yet simple and consistent toolset for manipulating JavaScript dates in a browser & Node.js',
-      creationTimestamp: '2024-03-10T10:30:04-05:00',
-      lastEditionTimestamp: '2024-03-29T21:58:49-05:00',
-      lastInspectionStatus: getReportResult(0),
+  data: Array.from({ length: 10 }).map((_, idx) => ({
+    id: idx.toString(),
+    repository: {
+      branch: 'master',
+      link: 'https://www.google.com/',
     },
-    ...Array.from({ length: 9 }).map((_, idx) => ({
-      id: idx.toString(),
-      repository: {
-        branch: 'master',
-        link: 'https://github.com/date-fns/date-fns',
-      },
-      title: `тест ${idx}`,
-      description: 'description',
-      creationTimestamp: '2022-01-03T12:00:09-05:00',
-      lastEditionTimestamp: '2022-01-03T12:00:09-05:00',
-      lastInspectionStatus: getReportResult(idx),
-    })),
-  ],
+    title: `Проект ${idx}`,
+    description: 'Краткое описание...',
+    creationTimestamp: '2022-08-10T10:30:04-05:00',
+    lastEditionTimestamp: '2022-08-10T10:30:04-05:00',
+    lastInspectionStatus: getReportResult(idx),
+  })),
   paginationData: {
-    pagesCount: 4,
+    pagesCount: 10,
     currentPage: 1,
   },
 };
@@ -42,15 +27,15 @@ export const MOCK_PROJECT_PAGE_DATA = {
     id: 'proj-date-fns',
     title: 'date-fns',
     description:
-      'date-fns provides the most comprehensive, yet simple and consistent toolset for manipulating JavaScript dates in a browser & Node.js',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl nunc mi ipsum faucibus vitae aliquet. Purus faucibus ornare suspendisse sed nisi.',
     repository: {
       link: 'https://github.com/date-fns/date-fns',
-      branch: 'master',
+      branch: 'main',
       title: 'date-fns',
       ownerNickname: 'johnDate-fns',
     },
-    creationTimestamp: '2024-03-10T10:30:04-05:00',
-    lastEditionTimestamp: '2024-03-29T21:58:49-05:00',
+    creationTimestamp: '2023-01-07 21:32:11',
+    lastEditionTimestamp: '2023-12-24 11:05:58',
     lastInspectionStatus: InspectionStatus.success,
   },
 };
