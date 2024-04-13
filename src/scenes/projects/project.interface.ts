@@ -1,16 +1,51 @@
-import { InspectionStatus } from '../../types/inspections';
+import {
+  GenericDataWithPagination,
+  InspectionStatus,
+  PaginationRequest,
+} from 'src/types';
+
+export type CreateProjectData = {
+  title: string;
+  description: string;
+  repository: {
+    branch: string;
+    title: string;
+    ownerNickname: string;
+  };
+};
+
+export type GetProjectsListDataRequestParams = PaginationRequest;
+
+export interface CreateProjectRequestParams {
+  data: GenericData<'project', CreateProjectData>;
+}
+
+export type GetProjectsListDataResponse = GenericDataWithPagination<
+  'projects',
+  Project[]
+>;
+
+export type GetProjectPageResponse = GenericData<'project', Project>;
+
+export interface EditProjectRequestParams {
+  data: GenericData<'project', CreateProjectData> & { id: string };
+}
+
+export interface DeleteProjectRequestParams {
+  id: string;
+}
 
 export interface Project {
-  id?: string;
-  data?: string;
-  description?: string;
+  id: string;
+  title: string;
+  description: string;
   repository: {
-    link?: string;
-    branch?: string;
+    link: string;
+    branch: string;
     title: string;
-    owner: string;
+    ownerNickname: string;
   };
-  creationTimestamp?: Date;
-  lastEditionTimestamp?: Date;
-  lastInspectionStatus?: InspectionStatus;
+  creationTimestamp: Timestamp;
+  lastEditionTimestamp: Timestamp;
+  lastInspectionStatus: InspectionStatus;
 }
