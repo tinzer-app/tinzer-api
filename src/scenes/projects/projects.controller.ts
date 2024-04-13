@@ -1,29 +1,41 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 
 import { ProjectsService } from './projects.service';
-import { ProjectDto } from './project.dto';
+import {
+  CreateProjectRequestParams,
+  DeleteProjectRequestParams,
+  EditProjectRequestParams,
+  GetProjectsListDataRequestParams,
+} from './project.interface';
 
 @Controller('/projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  getProjectsListData() {
-    return this.projectsService.getProjectsListData();
+  getProjectsListData(
+    @Body() { currentPaginationPage }: GetProjectsListDataRequestParams,
+  ) {
+    return this.projectsService.getProjectsListData(currentPaginationPage);
   }
 
-  @Get('/:id/report')
-  getReportData() {
-    return this.projectsService.getReportData();
-  }
-
-  @Post('/create')
-  addProject(@Body() projectDTO: ProjectDto) {
-    return this.projectsService.createProject(projectDTO);
+  @Post('/creating')
+  createProject(@Body() { data }: CreateProjectRequestParams) {
+    return this.projectsService.createProject(data.data);
   }
 
   @Get('/:id')
-  getProject(@Param('id') id: string) {
+  getProjectData(@Param('id') id: string) {
     return this.projectsService.getProject(id);
+  }
+
+  @Post('/editing')
+  editProject(@Body() { data: { data, id } }: EditProjectRequestParams) {
+    return this.projectsService.editProject(data, id);
+  }
+
+  @Delete('/deleting')
+  deleteProject(@Body() { id }: DeleteProjectRequestParams) {
+    return this.projectsService.deleteProject(id);
   }
 }

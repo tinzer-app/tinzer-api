@@ -1,0 +1,1 @@
+export { getFullProjectData } from './getFullProjectData';

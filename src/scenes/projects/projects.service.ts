@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-
-import { getDelayedValue } from 'src/utils/getDelayedValue';
-
-import { MOCK_PROJECT_PAGE_DATA } from './mocks';
 import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Project } from 'src/scenes/projects/project.interface';
-import { ProjectDto } from './project.dto';
+
+import { getPaginationData } from 'src/utils';
+
+import {
+  CreateProjectData,
+  GetProjectPageResponse,
+  GetProjectsListDataResponse,
+  Project,
+} from './project.interface';
+import { getFullProjectData } from './getFullProjectData';
 
 @Injectable()
 export class ProjectsService {
@@ -14,22 +18,45 @@ export class ProjectsService {
     @InjectModel('Project') private readonly projectModel: Model<Project>,
   ) {}
 
-  async getProjectsListData() {
-    // const data = await getDelayedValue(MOCK_PROJECTS_PAGE_DATA);
-    return await this.projectModel.find();
+  async getProjectsListData(
+    currentPaginationPage: number,
+  ): Promise<GetProjectsListDataResponse> {
+    const projects = await this.projectModel.find({});
+
+    const { paginationData, paginatedData } = getPaginationData(
+      projects,
+      currentPaginationPage,
+    );
+
+    return {
+      type: 'projects',
+      data: paginatedData,
+      paginationData,
+    };
   }
 
-  async getReportData() {
-    const data = await getDelayedValue(MOCK_PROJECT_PAGE_DATA);
+  async getProject(id: string): Promise<GetProjectPageResponse> {
+    const project = await this.projectModel.findOne({ id });
 
-    return data;
+    return {
+      type: 'project',
+      data: project,
+    };
   }
 
-  async getProject(id: string) {
-    return await this.projectModel.findOne({ _id: id });
+  async createProject(data: CreateProjectData) {
+    const projectData = getFullProjectData(data);
+
+    return await this.projectModel.create(projectData);
   }
 
-  async createProject(project: ProjectDto) {
-    return await this.projectModel.create(project);
+  async editProject(data: CreateProjectData, id: string) {
+    const projectUpdates = getFullProjectData(data, true);
+
+    return await this.projectModel.findOneAndUpdate({ id }, projectUpdates);
+  }
+
+  async deleteProject(id: string) {
+    return await this.projectModel.findOneAndDelete({ id });
   }
 }

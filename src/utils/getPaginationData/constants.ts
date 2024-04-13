@@ -1,0 +1,1 @@
+export const PAGINATION_PAGE_ITEMS_COUNT_LIMIT = 10;
