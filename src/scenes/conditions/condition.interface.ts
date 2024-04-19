@@ -1,6 +1,8 @@
+import { ConditionType } from "../../types";
+
 export interface Condition {
   id?: string;
-  type: ['fileExistence', 'stringsInFilesMatching', 'fieldValueValidation'];
+  type: ConditionType;
   params: {
     path: string;
     patterns?: string;
