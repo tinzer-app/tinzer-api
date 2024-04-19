@@ -19,8 +19,7 @@ export interface Inspection {
   inspectionData: InspectionData;
 }
 
-interface InspectionData {
-  id: string;
+export interface InspectionData {
   status: InspectionStatus;
   details: {
     conditions: Condition[];
@@ -28,7 +27,7 @@ interface InspectionData {
       project: {
         title: string;
         id: string;
-      }[];
+      };
       status: InspectionStatus;
       conditionsStatuses: InspectionStatus[];
     }[];
