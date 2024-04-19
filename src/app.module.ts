@@ -9,7 +9,7 @@ import { InspectionsModule } from './scenes/inspections/inspections.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forRoot(process.env.MONGODB_URL),
     ProjectsModule,
     ConditionsModule,
     InspectionsModule,

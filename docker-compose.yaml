@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - dbdata6:/data/db
+
+  tinzer-api-app:
+    image: alexandrezabelin/tinzer-api-app
+    container_name: tinzer-api-app
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+
+  tinzer-api-nginx:
+    container_name: tinzer-api-nginx
+    image: alexandrezabelin/tinzer-api-nginx
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    depends_on:
+      - tinzer-api-app
+
+volumes:
+  dbdata6:
+
+networks:
+  app-network:
+    driver: bridge
