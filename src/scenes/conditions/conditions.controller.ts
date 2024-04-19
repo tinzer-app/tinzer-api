@@ -7,17 +7,17 @@ import { ConditionDto } from './condition.dto';
 export class ConditionsController {
   constructor(private readonly conditionsService: ConditionsService) {}
 
-  @Get()
+  @Post()
   getConditionsListData() {
     return this.conditionsService.getConditionsListData();
   }
 
-  @Get('/:id')
+  @Post('/:id')
   getCondition(@Param('id') id: string) {
     return this.conditionsService.getCondition(id);
   }
 
-  @Post('/create')
+  @Post('/creating')
   createCondition(@Body() conditionDto: ConditionDto) {
     return this.conditionsService.createCondition(conditionDto);
   }
