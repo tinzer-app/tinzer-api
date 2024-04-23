@@ -1,8 +1,11 @@
-declare type GenericCondition<T, P> = {
+declare interface GenericCondition<T, P> extends GenericSimpleCondition<T, P> {
+  id: string;
+}
+
+declare interface GenericSimpleCondition<T, P> {
   type: T;
   params: P;
-  id: string;
-};
+}
 
 export enum ConditionType {
   fileExistence = 'fileExistence',
@@ -23,8 +26,8 @@ interface StringInFileMatchingFile {
 // нужен для отображения таблицы результата на странице проверки
 // TODO: придумать что-нибудь получше
 export type SingleParamConditionData =
-  | GenericCondition<ConditionType.fileExistence, string>
-  | GenericCondition<
+  | GenericSimpleCondition<ConditionType.fileExistence, string>
+  | GenericSimpleCondition<
       ConditionType.stringsInFilesMatching,
       StringInFileMatchingFile
     >;
