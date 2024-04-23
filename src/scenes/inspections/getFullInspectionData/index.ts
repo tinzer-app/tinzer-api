@@ -1,0 +1,1 @@
+export { getFullInspectionData } from './getFullInspectionData';

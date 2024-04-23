@@ -5,7 +5,6 @@ import { PaginationRequest } from 'src/types';
 import { ConditionsService } from './conditions.service';
 import {
   CreateConditionRequestParams,
-  DeleteConditionRequestParams,
   EditConditionRequestParams,
 } from './condition.interface';
 
@@ -34,7 +33,7 @@ export class ConditionsController {
   }
 
   @Delete('/deleting')
-  deleteCondition(@Body() { id }: DeleteConditionRequestParams) {
+  deleteCondition(@Body() { id }: WithId) {
     return this.conditionsService.deleteCondition(id);
   }
 }

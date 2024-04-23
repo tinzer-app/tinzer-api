@@ -19,10 +19,5 @@ export interface CreateConditionRequestParams {
 }
 
 export interface EditConditionRequestParams {
-  data: GenericData<'condition', CreateConditionData> &
-    DeleteConditionRequestParams;
-}
-
-export interface DeleteConditionRequestParams {
-  id: string;
+  data: GenericData<'condition', CreateConditionData> & WithId;
 }

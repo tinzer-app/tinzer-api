@@ -9,3 +9,7 @@ declare interface GenericData<T, D> {
   type: T;
   data: D;
 }
+
+declare interface WithId<T = string> {
+  id: T;
+}
