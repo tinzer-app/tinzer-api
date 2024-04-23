@@ -1,24 +1,40 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+
+import { PaginationRequest } from 'src/types';
 
 import { ConditionsService } from './conditions.service';
-import { ConditionDto } from './condition.dto';
+import {
+  CreateConditionRequestParams,
+  DeleteConditionRequestParams,
+  EditConditionRequestParams,
+} from './condition.interface';
 
 @Controller('/conditions')
 export class ConditionsController {
   constructor(private readonly conditionsService: ConditionsService) {}
 
   @Post()
-  getConditionsListData() {
-    return this.conditionsService.getConditionsListData();
+  getConditionsListData(@Body() { currentPaginationPage }: PaginationRequest) {
+    return this.conditionsService.getConditionsListData(currentPaginationPage);
   }
 
-  @Post('/:id')
+  @Get('/:id')
   getCondition(@Param('id') id: string) {
     return this.conditionsService.getCondition(id);
   }
 
   @Post('/creating')
-  createCondition(@Body() conditionDto: ConditionDto) {
-    return this.conditionsService.createCondition(conditionDto);
+  createCondition(@Body() { data }: CreateConditionRequestParams) {
+    return this.conditionsService.createCondition(data.data);
+  }
+
+  @Post('/editing')
+  editCondition(@Body() { data: { data, id } }: EditConditionRequestParams) {
+    return this.conditionsService.editCondition(data, id);
+  }
+
+  @Delete('/deleting')
+  deleteCondition(@Body() { id }: DeleteConditionRequestParams) {
+    return this.conditionsService.deleteCondition(id);
   }
 }
