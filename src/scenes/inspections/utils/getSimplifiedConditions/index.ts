@@ -1,0 +1,1 @@
+export { getSimplifiedConditions } from './getSimplifiedConditions';

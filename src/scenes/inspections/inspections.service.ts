@@ -1,18 +1,20 @@
 import { Model } from 'mongoose';
-import fetch from 'node-fetch';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { getPaginationData } from 'src/utils';
-import { InspectionStatus } from 'src/types';
+import { getInspectionStatus, getPaginationData } from 'src/utils';
+import { ConditionType, InspectionStatus } from 'src/types';
 
-import { CORE_API } from '../../constants';
 import { Condition } from '../conditions/condition.interface';
 import { Project } from '../projects/project.interface';
-import { ResponseReportDto } from '../../dto/response-report.dto';
-import { RequestReportDto } from '../../dto/request-report.dto';
-import { getFullInspectionData } from './getFullInspectionData';
 import { CreateInspectionData, Inspection } from './inspection.interface';
+import {
+  getFullInspectionData,
+  getRunInspectionData,
+  CoreConditionType,
+  getSimplifiedConditions,
+  RunInspectionCoreRequestParams,
+} from './utils';
 
 @Injectable()
 export class InspectionsService {
@@ -108,20 +110,98 @@ export class InspectionsService {
     return await this.inspectionModel.findOneAndDelete({ id });
   }
 
-  // todo param - inspection dto
-  // todo convert inspection dto to RequestReportDto
-  async runInspection(inspection: RequestReportDto) {
-    //const data = await getDelayedValue(null, 1000);
-    let data: ResponseReportDto;
-    const response = await fetch(CORE_API, {
-      method: 'POST',
-      body: JSON.stringify(inspection),
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (response.status == 201) {
-      data = JSON.parse(await response.json()) as ResponseReportDto;
-    }
+  async runInspection(id: string) {
+    const inspection = await this.inspectionModel.findOne({ id });
 
-    return data;
+    const conditionsIds = inspection.conditions.map(({ id }) => id);
+    const conditions = await this.conditionModel.find({
+      id: { $in: conditionsIds },
+    });
+
+    const projectsIds = inspection.projects.map(({ id }) => id);
+    const projects = await this.projectModel.find({
+      id: { $in: projectsIds },
+    });
+
+    const simplifiedConditions = getSimplifiedConditions(conditions);
+
+    const requestParams: RunInspectionCoreRequestParams = {
+      projects: projects.map(
+        ({ repository: { branch, title: repo, ownerNickname: owner } }) => ({
+          system: 'github',
+          owner,
+          repo,
+          branch,
+        }),
+      ),
+      conditions: simplifiedConditions,
+    };
+
+    const { inspection: inspectionResult } =
+      await getRunInspectionData(requestParams);
+
+    const newInspection: Inspection = {
+      title: inspection.title,
+      id: inspection.id,
+      projects: inspection.projects,
+      conditions: inspection.conditions,
+      description: inspection.description,
+      creationTimestamp: inspection.creationTimestamp,
+      lastEditionTimestamp: inspection.lastEditionTimestamp,
+      lastInspectionTimestamp: new Date().toISOString(),
+      inspectionData: {
+        status: getInspectionStatus(
+          inspectionResult.every(({ result }) => result.every((res) => !!res)),
+        ),
+        details: {
+          conditions: simplifiedConditions.map((condition) => {
+            switch (condition.type) {
+              case CoreConditionType.fileExistence: {
+                return {
+                  type: ConditionType.fileExistence,
+                  params: condition.params.filePath,
+                };
+              }
+
+              default: {
+                return {
+                  type: ConditionType.stringsInFilesMatching,
+                  params: {
+                    path: condition.params.filePath,
+                    pattern: condition.params.line,
+                  },
+                };
+              }
+            }
+          }),
+          projectsInspections: inspectionResult.map(({ result }, idx) => {
+            const { title, id } = inspection.projects[idx];
+
+            return {
+              project: { title, id },
+              status: getInspectionStatus(result.every((res) => res)),
+              conditionsStatuses: result.map((res) => getInspectionStatus(res)),
+            };
+          }),
+        },
+      },
+    };
+
+    // обновляем статусы проектов
+
+    await Promise.all(
+      projects.map(({ id }, idx) =>
+        this.projectModel.findOneAndUpdate(
+          { id },
+          {
+            lastInspectionStatus: getInspectionStatus(
+              inspectionResult[idx].result.every((res) => res),
+            ),
+          },
+        ),
+      ),
+    );
+
+    return await this.inspectionModel.findOneAndReplace({ id }, newInspection);
   }
 }

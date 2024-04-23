@@ -1,6 +1,6 @@
 import { v4 as getUuid } from 'uuid';
 
-import { CreateInspectionData, Inspection } from '../inspection.interface';
+import { CreateInspectionData, Inspection } from '../../inspection.interface';
 
 export const getFullInspectionData = (
   data: CreateInspectionData,

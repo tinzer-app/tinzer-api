@@ -53,4 +53,9 @@ export class InspectionsController {
   deleteInspection(@Body() { id }: WithId) {
     return this.inspectionsService.deleteInspection(id);
   }
+
+  @Post('/:id/runInspection')
+  runInspection(@Param('id') id: string) {
+    return this.inspectionsService.runInspection(id);
+  }
 }
