@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-
-import { getDelayedValue } from 'src/utils/getDelayedValue';
-
-import { MOCK_INSPECTION_PAGE_DATA, MOCK_INSPECTIONS_PAGE_DATA } from './mocks';
-import fetch from 'node-fetch';
-import { CORE_API } from '../../constants';
-import { RequestReportDto } from '../../dto/request-report.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Inspection } from './inspection.interface';
-import { InspectionDto } from './inspection.dto';
+import fetch from 'node-fetch';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { getPaginationData } from 'src/utils';
+import { InspectionStatus } from 'src/types';
+
+import { CORE_API } from '../../constants';
 import { Condition } from '../conditions/condition.interface';
 import { Project } from '../projects/project.interface';
-import { ResponseReportDto } from "../../dto/response-report.dto";
-import { filter } from "rxjs";
+import { ResponseReportDto } from '../../dto/response-report.dto';
+import { RequestReportDto } from '../../dto/request-report.dto';
+import { getFullInspectionData } from './getFullInspectionData';
+import { CreateInspectionData, Inspection } from './inspection.interface';
 
 @Injectable()
 export class InspectionsService {
@@ -23,37 +22,90 @@ export class InspectionsService {
     @InjectModel('Project') private readonly projectModel: Model<Project>,
     @InjectModel('Condition') private readonly conditionModel: Model<Condition>,
   ) {}
-  async getInspectionsListData() {
-    return await this.inspectionModel.find();
+
+  async getInspectionsListData(currentPaginationPage: number) {
+    const inspections: Inspection[] = await this.inspectionModel.find({});
+
+    const tableInspections = inspections.map(
+      ({
+        title,
+        id,
+        description,
+        lastInspectionTimestamp,
+        inspectionData,
+      }) => ({
+        title,
+        id,
+        description,
+        lastInspectionTimestamp,
+        lastInspectionStatus: inspectionData.status,
+      }),
+    );
+
+    const { paginationData, paginatedData } = getPaginationData(
+      tableInspections,
+      currentPaginationPage,
+    );
+
+    return {
+      type: 'inspections',
+      data: paginatedData,
+      paginationData,
+    };
+  }
+
+  async getInspectionProjects(searchValue: string) {
+    const projects = await this.projectModel.find({
+      title: { $regex: searchValue },
+    });
+
+    return {
+      items: projects.map(({ title, id }) => ({ title, id })),
+    };
+  }
+
+  async getInspectionConditions(searchValue: string) {
+    const conditions = await this.conditionModel.find({
+      title: { $regex: searchValue },
+    });
+
+    return {
+      items: conditions.map(({ title, id }) => ({ title, id })),
+    };
+  }
+
+  async createInspection(data: CreateInspectionData) {
+    const inspectionData = {
+      ...getFullInspectionData(data),
+      inspectionData: {
+        status: InspectionStatus.didNotStart,
+        details: undefined,
+      },
+    };
+
+    return await this.inspectionModel.create(inspectionData);
   }
 
   async getInspection(id: string) {
-    return await this.inspectionModel.findOne({ _id: id });
+    const inspection = await this.inspectionModel.findOne({ id });
+
+    return {
+      type: 'inspection',
+      data: inspection,
+    };
   }
 
-  async createInspection(inspectionDto: InspectionDto) {
-    return await this.inspectionModel.create(inspectionDto.data);
-  }
+  async editInspection(data: CreateInspectionData, id: string) {
+    const inspectionUpdates = getFullInspectionData(data, true);
 
-  async editInspection(inspectionDto: InspectionDto, id: string) {
     return await this.inspectionModel.findOneAndUpdate(
-      { _id: id },
-      inspectionDto.data,
+      { id },
+      inspectionUpdates,
     );
   }
 
-  async getReportData() {
-    const data = await getDelayedValue(MOCK_INSPECTION_PAGE_DATA);
-
-    return data;
-  }
-
-  async getProject(id: string) {
-    return await this.projectModel.findOne({ _id: id });
-  }
-
-  async getCondition(id: string) {
-    return await this.conditionModel.findOne({ _id: id });
+  async deleteInspection(id: string) {
+    return await this.inspectionModel.findOneAndDelete({ id });
   }
 
   // todo param - inspection dto

@@ -1,40 +1,56 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+
+import { PaginationRequest } from 'src/types';
 
 import { InspectionsService } from './inspections.service';
-import { InspectionDto } from './inspection.dto';
+import {
+  CreateInspectionRequestParams,
+  EditInspectionRequestParams,
+  ModalGetEntityRequestParams,
+} from './inspection.interface';
 
 @Controller('/inspections')
 export class InspectionsController {
   constructor(private readonly inspectionsService: InspectionsService) {}
 
   @Post()
-  getInspectionsListData() {
-    return this.inspectionsService.getInspectionsListData();
+  getInspectionsListData(@Body() { currentPaginationPage }: PaginationRequest) {
+    return this.inspectionsService.getInspectionsListData(
+      currentPaginationPage,
+    );
   }
 
-  @Get('/:id/report')
-  getReportData() {
-    return this.inspectionsService.getReportData();
+  @Post('/modal/projects')
+  getInspectionProjects(
+    @Body() { searchValue = '' }: ModalGetEntityRequestParams,
+  ) {
+    return this.inspectionsService.getInspectionProjects(searchValue);
   }
 
-  @Post('/:id')
+  @Post('/modal/conditions')
+  getInspectionConditions(
+    @Body() { searchValue = '' }: ModalGetEntityRequestParams,
+  ) {
+    return this.inspectionsService.getInspectionConditions(searchValue);
+  }
+
+  @Get('/:id')
   getInspection(@Param('id') id: string) {
-    return {
-      type: 'inspection',
-      data: this.inspectionsService.getInspection(id),
-    };
+    return this.inspectionsService.getInspection(id);
   }
 
   @Post('/creating')
-  createInspection(@Body() inspectionDto: InspectionDto) {
-    return this.inspectionsService.createInspection(inspectionDto);
+  createInspection(@Body() { data }: CreateInspectionRequestParams) {
+    return this.inspectionsService.createInspection(data.data);
+  }
+
+  @Post('/editing')
+  editInspection(@Body() { data: { data, id } }: EditInspectionRequestParams) {
+    return this.inspectionsService.editInspection(data, id);
+  }
+
+  @Delete('/deleting')
+  deleteInspection(@Body() { id }: WithId) {
+    return this.inspectionsService.deleteInspection(id);
   }
 }

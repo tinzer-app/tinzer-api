@@ -3,7 +3,6 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import {
   CreateProjectRequestParams,
-  DeleteProjectRequestParams,
   EditProjectRequestParams,
   GetProjectsListDataRequestParams,
 } from './project.interface';
@@ -35,7 +34,7 @@ export class ProjectsController {
   }
 
   @Delete('/deleting')
-  deleteProject(@Body() { id }: DeleteProjectRequestParams) {
+  deleteProject(@Body() { id }: WithId) {
     return this.projectsService.deleteProject(id);
   }
 }

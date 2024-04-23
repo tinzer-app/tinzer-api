@@ -28,11 +28,7 @@ export type GetProjectsListDataResponse = GenericDataWithPagination<
 export type GetProjectPageResponse = GenericData<'project', Project>;
 
 export interface EditProjectRequestParams {
-  data: GenericData<'project', CreateProjectData> & { id: string };
-}
-
-export interface DeleteProjectRequestParams {
-  id: string;
+  data: GenericData<'project', CreateProjectData> & WithId;
 }
 
 export interface Project {
