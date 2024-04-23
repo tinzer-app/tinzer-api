@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
-
-import { getDelayedValue } from 'src/utils/getDelayedValue';
-
-import { MOCK_CONDITIONS_PAGE_DATA, MOCK_CONDITION_PAGE_DATA } from './mocks';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Condition } from './condition.interface';
-import { ConditionDto } from "./condition.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { getPaginationData } from 'src/utils';
+
+import { Condition, CreateConditionData } from './condition.interface';
+import { getFullConditionData } from './getFullConditionData';
 
 @Injectable()
 export class ConditionsService {
@@ -14,21 +13,61 @@ export class ConditionsService {
     @InjectModel('Condition') private readonly conditionModel: Model<Condition>,
   ) {}
 
-  async getConditionsListData() {
-    return await this.conditionModel.find();
+  async getConditionsListData(currentPaginationPage: number) {
+    const conditions: Condition[] = await this.conditionModel.find({});
+
+    const tableConditions = conditions.map(
+      ({
+        title,
+        id,
+        description,
+        lastEditionTimestamp,
+        creationTimestamp,
+        conditions,
+      }) => ({
+        title,
+        id,
+        description,
+        lastEditionTimestamp,
+        creationTimestamp,
+        conditionsTypes: conditions.map(({ type }) => type),
+      }),
+    );
+
+    const { paginationData, paginatedData } = getPaginationData(
+      tableConditions,
+      currentPaginationPage,
+    );
+
+    return {
+      type: 'conditions',
+      data: paginatedData,
+      paginationData,
+    };
   }
 
   async getCondition(id: string) {
-    return await this.conditionModel.findOne({ _id: id });
+    const condition = await this.conditionModel.findOne({ id });
+
+    return {
+      type: 'condition',
+      data: condition,
+    };
   }
 
-  async createCondition(conditionDto: ConditionDto) {
-    return await this.conditionModel.create(conditionDto);
+  async createCondition(data: CreateConditionData) {
+    const conditionData = getFullConditionData(data);
+
+    return await this.conditionModel.create(conditionData);
   }
 
-  async getReportData() {
-    const data = await getDelayedValue(MOCK_CONDITION_PAGE_DATA);
+  async editCondition(data: CreateConditionData, id: string) {
+    const projectUpdates = getFullConditionData(data, true);
 
-    return data;
+    return await this.conditionModel.findOneAndUpdate({ id }, projectUpdates);
+  }
+
+  async deleteCondition(id: string) {
+    return await this.conditionModel.findOneAndDelete({ id });
   }
 }

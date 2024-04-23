@@ -1,0 +1,1 @@
+export { getFullConditionData } from './getFullConditionData';
